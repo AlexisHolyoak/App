@@ -15,9 +15,12 @@ use Intervention\Image\ImageManagerStatic as Image;
 use Response;
 use Illuminate\Support\Facades\Redirect;
 use Mail;
+use Illuminate\Http\File;
 use App\Mail\VoucherSent;
 use Validator;
 use PDF;
+use DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 class VoucherController extends Controller
 {
@@ -32,17 +35,25 @@ class VoucherController extends Controller
     public function index()
     {
       if(Auth::user()->hasrole('administrador')){
-        $vouchers=Voucher::all();
-        $groups=Group::all();
-        $courses=Course::all();
-        $usuario=User::all();
-        return view('voucher.index',compact('vouchers','groups','courses','usuario'));
+        $vouchers=DB::table('vouchers')
+        ->join('groups','vouchers.group_id','=','groups.id')
+        ->join('courses','vouchers.course_id','=','courses.id')
+        ->join('users','vouchers.user_id','=','users.id')
+        ->select('vouchers.id as VID','courses.nombre AS CNOMBRE','courses.online as CONLINE','courses.presencial AS CPRESENCIAL',
+        'groups.fechainicio AS GINICIO','groups.fechaconclusion AS GCONCLUSION','vouchers.onlineinicio AS VINICIO',
+        'users.name AS UNAME','users.email AS UEMAIL','vouchers.estado AS VESTADO','vouchers.created_at AS VCREATEDAT','vouchers.imagen AS VIMAGEN')->get();
+        return view('voucher.index',compact('vouchers'));
       }else{
         $id=Auth::id();
-        $vouchers=Voucher::where('user_id',$id)->get();
-        $groups=Group::all();
-        $courses=Course::all();
-        return view('voucher.index',compact('vouchers','groups','courses'));
+        $vouchers=DB::table('vouchers')
+        ->join('groups','vouchers.group_id','=','groups.id')
+        ->join('courses','vouchers.course_id','=','courses.id')
+        ->join('users','vouchers.user_id','=','users.id')
+        ->select('vouchers.id as VID','courses.nombre AS CNOMBRE','courses.online AS CONLINE','courses.presencial AS CPRESENCIAL',
+        'groups.fechainicio AS GINICIO','groups.fechaconclusion AS GCONCLUSION','vouchers.onlineinicio AS VINICIO',
+        'users.name AS UNAME','users.email AS UEMAIL','vouchers.estado AS VESTADO','vouchers.created_at AS VCREATEDAT','vouchers.imagen AS VIMAGEN')
+        ->where('vouchers.user_id',$id)->get();
+        return view('voucher.index',compact('vouchers'));
       }
     }
 
@@ -71,17 +82,15 @@ class VoucherController extends Controller
     {
       $this->validate($request,[
         'courses' => 'required',
-        'imagen'=>'max:1200|required'
+        'imagen' => 'max:25000|required|mimes:jpeg,png.pdf'
       ]);
       if(Student::where('user_id',Auth::id())->count()==1){
         $idstudent=Student::where('user_id',Auth::id())->first()->id;
-        $img=Image::make($request->file('imagen')->getRealPath());
-        //this action requires too much time
-        Response::make($img->encode('jpeg','30'));
-        //INSERTAR Y RETORNAR EL ID
+        $fileurl=$request->file('imagen')->getRealPath();
+        $comprobante=Storage::putFile('vouchers',new File($fileurl));
         $id = Voucher::insertGetId(
             [
-              'imagen'=> $img,
+              'imagen'=> $comprobante,
               'estado'=> 0,
               'course_id'=> $request->get('courses'),
               'group_id'=> $request->get('fechainicio'),
@@ -93,15 +102,14 @@ class VoucherController extends Controller
               "updated_at" => \Carbon\Carbon::now()
             ]
           );
-        return redirect()->action('VoucherController@mail',[$id]);
+        //return redirect()->action('VoucherController@mail',[$id]);
       }else{
-        $img=Image::make($request->file('imagen')->getRealPath());
-        //this action requires too much time
-        Response::make($img->encode('jpeg','30'));
+        $fileurl=$request->file('imagen')->getRealPath();
+        $comprobante=Storage::putFile('vouchers',new File($fileurl));
         //INSERTAR Y RETORNAR EL ID
         $id = Voucher::insertGetId(
             [
-              'imagen'=> $img,
+              'imagen'=> $comprobante,
               'estado'=> 0,
               'course_id'=> $request->get('courses'),
               'group_id'=> $request->get('fechainicio'),
@@ -185,12 +193,11 @@ class VoucherController extends Controller
     }
     public function mail($id){
       $vouchers = Voucher::where('id',$id)->first();
-      $imagen= base64_encode($vouchers->imagen);
-      $data='data:image/jpeg;base64,'.$imagen;
+      $file=$vouchers->imagen;
       $usuario=User::where('id',$vouchers-> user_id)->first();
       $group=Group::where('id',$vouchers-> group_id)->first();
       $course=Course::where('id',$vouchers-> course_id)->first();
-      Mail::to('broarshuacho@gmail.com')->send(new VoucherSent($data,$group,$course,$usuario,$vouchers));
+      Mail::to('broarshuacho@gmail.com')->send(new VoucherSent($file,$group,$course,$usuario,$vouchers));
       return Redirect::to('home');
     }
     public function certificadopresencialpdu($id){
@@ -209,7 +216,7 @@ class VoucherController extends Controller
       $course=Course::where('id',$voucher->course_id)->first();
       $student=Student::where('id',$voucher->student_id)->first();
       $anothercourse=Course::where('nombre','like','%'.$course->nombre.'%')->where('presencial',1)->first()->id;
-      $group=Group::where('course_id',$anothercourse)->first();      
+      $group=Group::where('course_id',$anothercourse)->first();
       $fechainicio=\Carbon\Carbon::parse($group->fechainicio)->format('d-m-Y');
       $fechaconclusion=\Carbon\Carbon::parse($group->fechaconclusion)->format('d-m-Y');
       $html= View::make('certificates.pdu', compact('course', 'student','fechainicio','fechaconclusion'))->render();

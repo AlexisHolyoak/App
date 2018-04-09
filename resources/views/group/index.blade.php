@@ -31,51 +31,51 @@
                   <tbody>
 										@foreach($groups as $group)
 										<tr>
-											<td>{!!$course->where('id',$group->course_id)->first()->nombre!!}</td>
-											<td>{{$group->fechainicio}}</td>
-											<td>{{$group->orden}}</td>
-											<td>{{$group->fechaconclusion}}</td>
-											<td>{{$course->where('id',$group->course_id)->first()->horainicio}}</td>
-											<td>{{$course->where('id',$group->course_id)->first()->horaconclusion}}</td>
-											<td>@if($course->where('id',$group->course_id)->first()->lunes)
+											<td>{!!$group->CNOMBRE!!}</td>
+											<td>{{$group->GINICIO}}</td>
+											<td>{{$group->GORDEN}}</td>
+											<td>{{$group->GCONCLUSION}}</td>
+											<td>{{$group->CHINICIO}}</td>
+											<td>{{$group->CHFIN}}</td>
+											<td>@if($group->CLU)
 												Lunes
 												@endif
-												@if($course->where('id',$group->course_id)->first()->martes)
+												@if($group->CMA)
 													Martes
 													@endif
-													@if($course->where('id',$group->course_id)->first()->miercoles)
+													@if($group->CMI)
 														Miercoles
 														@endif
-														@if($course->where('id',$group->course_id)->first()->jueves)
+														@if($group->CJU)
 															Jueves
 															@endif
-															@if($course->where('id',$group->course_id)->first()->viernes)
+															@if($group->CVI)
 																Viernes
 																@endif
-																@if($course->where('id',$group->course_id)->first()->sabado)
+																@if($group->CSA)
 																	Sabado
 																	@endif
-												@if($course->where('id',$group->course_id)->first()->domingo)
+												@if($group->CDO)
 												Domingo
 												@endif
 												</td>
 												<td>
-													@if($group->estado==1)
+													@if($group->GESTADO==1)
 													Por concluir
 													@endif
-													@if($group->estado==0)
+													@if($group->GESTADO==0)
 													Concluido
 													@endif
 												</td>
                       <td>
-													@if($group->disponibilidad==1)
-													<a href="#" class="btn btn-success btn-xs" data-toggle="modal" data-target="#bs-disponibility-{{$group->id}}">Disponible</a>
+													@if($group->GDISPONIBILIDAD==1)
+													<a href="#" class="btn btn-success btn-xs" data-toggle="modal" data-target="#bs-disponibility-{{$group->GID}}">Disponible</a>
 													@endif
-													@if($group->disponibilidad==0)
-													<a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#bs-disponibility-{{$group->id}}">No disponible</a>
+													@if($group->GDISPONIBILIDAD==0)
+													<a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#bs-disponibility-{{$group->GID}}">No disponible</a>
 													@endif
-													<a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#bs-conclude-{{$group->id}}">Concluir</a>
-													<a href="{{route('group.edit',$group->id)}}" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></a>
+													<a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#bs-conclude-{{$group->GID}}">Concluir</a>
+													<a href="{{route('group.edit',$group->GID)}}" class="btn btn-warning btn-xs"><i class="fa fa-pencil"></i></a>
                       </td>
 										</tr>
 										@endforeach

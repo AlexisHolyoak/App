@@ -1,7 +1,7 @@
-<div class="modal fade in" tabindex="-1" role="dialog" aria-hidden="true"  id="bs-disponibility-{{$group->id}}" style="display:none;">
+<div class="modal fade in" tabindex="-1" role="dialog" aria-hidden="true"  id="bs-disponibility-{{$group->GID}}" style="display:none;">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <form class="" action="{{route('group.disponibility',$group->id)}}" method="post">
+      <form class="" action="{{route('group.disponibility',$group->GID)}}" method="post">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span>
@@ -16,13 +16,13 @@
 						<br>
 						<div class="form-control text-center">
 							<div class="pretty p-default p-thick p-pulse p-bigger">
-									<input type="radio" name="disponibilidad" value="1" required {{($group->disponibilidad ==1)? 'checked':''}} />
+									<input type="radio" name="disponibilidad" value="1" required {{($group->GDISPONIBILIDAD ==1)? 'checked':''}} />
 									<div class="state p-primary-o">
 											<label>DISPONIBLE</label>
 									</div>
 							</div>
 							<div class="pretty p-default p-thick p-pulse p-bigger">
-									<input type="radio" name="disponibilidad" value="0" {{($group->disponibilidad ==0)? 'checked':''}} />
+									<input type="radio" name="disponibilidad" value="0" {{($group->GDISPONIBILIDAD ==0)? 'checked':''}} />
 									<div class="state p-primary-o">
 											<label>NO DISPONIBLE</label>
 									</div>

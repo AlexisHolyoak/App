@@ -21,10 +21,6 @@
 </head>
 <body>
 	<h2>Solicitud de matricula</h2>
-	<div class="imagen">
-			<img src="{{$message->embed($data)}}" alt="comprobante" title="comprobante" class="responsive" width="500" />
-			<br>
-	</div>
 	<div class="modalidad">
 		@if($course->online)
 		<h4>Modalidad</h4> Online

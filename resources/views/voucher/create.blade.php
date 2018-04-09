@@ -74,8 +74,8 @@
             <label for="" class="form-control"></label>
           </div>
           <div class="form-group col-md-8 col-md-offset-2">
-            <label for="">Adjunta imagen de tu comprobante(max 1200kb)</label>
-            <input type="file" name="imagen" value="" class="form-control"  accept="image/x-png,image/jpeg"required onchange="loadFile(event)" >
+            <label for="">Adjunta imagen o archivo de tu comprobante(max 25mb)</label>
+            <input type="file" name="imagen" value="" class="form-control"  accept="image/x-png,image/jpeg,application/pdf" required onchange="loadFile(event)" >
           </div>
 					<div class="form-group col-md-8 col-md-offset-2">
             <img src="" alt="" id="output" border="5" class="img-thumbnail"  style="display:none;">

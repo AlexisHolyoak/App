@@ -63,9 +63,6 @@ Route::delete('voucher/{id}', [
 Route::get('mail/{id}', 'VoucherController@mail')->name('voucher.email');
 Route::get('rolegiven/{id}','RoleController@rolgiven',['middleware' => ['role:administrador']])->name('role.rolegiven');
 Route::post('studentrol','RoleController@studentrol',['middleware' => ['role:administrador']])->name('role.studentrol');
-//Route::get('mail/test',function(){return view('mails.voucher');});
-//Route::post('/voucher/create/{groupid}/{userid}','VoucherController@store')->name('voucher.store');
-//Route::resource('user','UserController');
 Route::post('/userrole/{id}', 'UserController@userrole');
 Route::resource('studentgroup','StudentPresencialController');
 Route::get('/mycourses','MyCourseController@index')->name('mycourses.index');
@@ -97,3 +94,6 @@ Route::get('/certificado/presencial/pdu/{id}','VoucherController@certificadopres
 Route::get('/certificado/online/pdu/{id}','VoucherController@certificadoonlinepdu')->name('voucher.certificadoonlinepdu');
 Route::get('/test/{id}','VoucherController@test');
 Route::get('/firstfillmatricula/{id}','VoucherController@firstfillmatricula')->name('student.fillmatricula');
+//STORAGE ROUTES
+Route::get('/archivo','FileController@archivo')->name('archivo');
+Route::get('/see/comprobante/{id}','FileController@comprobante')->name('file.comprobante');

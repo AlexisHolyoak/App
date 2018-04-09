@@ -6,7 +6,7 @@ use App\Group;
 use App\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-
+use DB;
 class GroupController extends Controller
 {
     public function __construct(){
@@ -19,9 +19,14 @@ class GroupController extends Controller
      */
     public function index()
     {
-        $groups=Group::all();
-        $course=Course::all();
-        return view('group.index',compact('groups','course'));
+        $groups=DB::table('groups')
+        ->join('courses','groups.course_id','=','courses.id')
+        ->select('courses.nombre AS CNOMBRE','groups.fechainicio AS GINICIO','groups.orden AS GORDEN',
+        'groups.fechaconclusion AS GCONCLUSION','courses.horainicio AS CHINICIO',
+        'courses.horaconclusion AS CHFIN','courses.lunes AS CLU','courses.martes AS CMA',
+        'courses.miercoles AS CMI','courses.jueves AS CJU','courses.viernes AS CVI','courses.sabado AS CSA',
+        'courses.domingo AS CDO','groups.estado AS GESTADO','groups.disponibilidad AS GDISPONIBILIDAD','groups.id AS GID')->get();
+        return view('group.index',compact('groups'));
     }
 
     /**

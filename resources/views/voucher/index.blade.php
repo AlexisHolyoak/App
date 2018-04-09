@@ -23,7 +23,7 @@
 											<th data-priority="6">Usuario</th>
 											<th data-priority="5">Correo</th>
 											@endif
-                      <th data-priority="7">Imagen</th>
+                      <th data-priority="7">Comprobante</th>
                       <th data-priority="8">Estado</th>
                       <th data-priority="10">Fecha de envio</th>
                       <th data-priority="2" width="1%">Acciones</th>
@@ -32,39 +32,39 @@
                   <tbody>
 										@foreach($vouchers as $voucher)
                     <tr>
-                      <td>{!!$courses->where('id',$voucher->course_id)->first()->nombre!!}</td>
+                      <td>{!!$voucher->CNOMBRE!!}</td>
 											<td>
-											@if($courses->where('id',$voucher->course_id)->first()->online)
+											@if($voucher->CONLINE)
 												Online
 											@endif
-											@if($courses->where('id',$voucher->course_id)->first()->presencial)
+											@if($voucher->CPRESENCIAL)
 												Presencial
 											@endif</td>
 											<td>
-											@if($courses->where('id',$voucher->course_id)->first()->presencial)
-												{{$groups->where('id',$voucher->group_id)->first()->fechainicio}}
+											@if($voucher->CPRESENCIAL)
+												{{$voucher->GINICIO}}
 											@endif
-											@if($courses->where('id',$voucher->course_id)->first()->online)
-												{{$voucher->onlineinicio}}
+											@if($voucher->CONLINE)
+												{{$voucher->VINICIO}}
 											@endif
 											</td>
 											@if($user->hasRole('administrador'))
-											<td>{{$usuario->where('id',$voucher->user_id)->first()->name}}</td>
-											<td><a href="mailto:{{$usuario->where('id',$voucher->user_id)->first()->email}}">{{$usuario->where('id',$voucher->user_id)->first()->email}}</a> </td>
+											<td>{{$voucher->UNAME}}</td>
+											<td><a href="mailto:{{$voucher->UEMAIL}}">{{$voucher->UEMAIL}}</a> </td>
 											@endif
-                      <td><a data-toggle="modal" data-target="#bs-{{$voucher->id}}">Ver comprobante</a></td>
-											@if($voucher->estado==0)
+                      <td><a href="{{route('file.comprobante',$voucher->VID)}}" target="_blank">Previsualizar comprobante</a></td>
+											@if($voucher->VESTADO==0)
 											<td><span class="label label-danger">En observación</span></td>
 											@else
 											<td><span class="label label-success">Aprovada</span></td>
 											@endif
-                      <td>{{$voucher->created_at}}</td>
+                      <td>{{$voucher->VCREATEDAT}}</td>
                       <td>
-													@if($voucher->estado==0)
+													@if($voucher->VESTADO==0)
 													@if($user->hasRole('administrador'))
-													<a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#bs-aprove-{{$voucher->id}}">Aprobar</a>
+													<a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#bs-aprove-{{$voucher->VID}}">Aprobar</a>
 													@endif
-                          <a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#bs-eliminar-{{$voucher->id}}"><i class="fa fa-close"></i></a>
+                          <a href="#" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#bs-eliminar-{{$voucher->VID}}"><i class="fa fa-close"></i></a>
 													@endif
                       </td>
                     </tr>
@@ -77,9 +77,7 @@
     </div>
   </div>
 </div>
-@foreach($vouchers as $voucher)
-@include('voucher.voucherimage')
-@endforeach
+
 @foreach($vouchers as $voucher)
 @include('voucher.destroy')
 @endforeach
